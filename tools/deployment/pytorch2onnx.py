@@ -24,8 +24,11 @@ def pytorch2onnx(model,
                  test_img=None,
                  do_simplify=False,
                  dynamic_export=None,
-                 skip_postprocess=False):
+                 skip_postprocess=False,
+                 normalize_in_graph=False):
 
+    if normalize_in_graph:
+        normalize_cfg['in_graph'] = True
     input_config = {
         'input_shape': input_shape,
         'input_path': input_img,
@@ -150,6 +153,8 @@ def pytorch2onnx(model,
             input_config['input_path'] = input_img
 
         # prepare input once again
+        # pytorch model does not support in graph input normalization
+        input_config['normalize_cfg']['in_graph'] = False
         one_img, one_meta = preprocess_example_input(input_config)
         img_list, img_meta_list = [one_img], [[one_meta]]
 
@@ -288,6 +293,10 @@ def parse_args():
         help='Whether to export model without post process. Experimental '
         'option. We do not guarantee the correctness of the exported '
         'model.')
+    parser.add_argument(
+        '--normalize-in-graph',
+        action='store_true',
+        help='Whether to include image normalization in ONNX graph.')
     args = parser.parse_args()
     return args
 
@@ -342,7 +351,8 @@ if __name__ == '__main__':
         test_img=args.test_img,
         do_simplify=args.simplify,
         dynamic_export=args.dynamic_export,
-        skip_postprocess=args.skip_postprocess)
+        skip_postprocess=args.skip_postprocess,
+        normalize_in_graph=args.normalize_in_graph)
 
     # Following strings of text style are from colorama package
     bright_style, reset_style = '\x1b[1m', '\x1b[0m'

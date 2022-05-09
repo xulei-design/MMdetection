@@ -38,6 +38,7 @@ python tools/deployment/onnx2tensorrt.py \
     --workspace-size {WORKSPACE_SIZE} \
     --show \
     --verify \
+    --skip-normalize \
 ```
 
 Description of all arguments:
@@ -53,6 +54,7 @@ Description of all arguments:
 - `--show`: Determines whether to show the outputs of the model. If not specified, it will be set to `False`.
 - `--verify`: Determines whether to verify the correctness of models between ONNXRuntime and TensorRT. If not specified, it will be set to `False`.
 - `--verbose`: Determines whether to print logging messages. It's useful for debugging. If not specified, it will be set to `False`.
+- `--skip-normalize`: Determins whether to skip normalization of the input image. If not specified, it will be set to `False`. This is useful when the normalization is already included in the ONNX graph: if `--normalize-in-graph` is used with `pytorch2onnx.py`, this should be set to `True`.
 
 Example:
 
