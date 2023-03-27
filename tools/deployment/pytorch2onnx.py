@@ -212,9 +212,9 @@ def pytorch2onnx(model,
         print('The numerical values are the same between Pytorch and ONNX')
 
 
-def parse_normalize_cfg(test_pipeline):
+def parse_normalize_cfg(train_pipeline):
     transforms = None
-    for pipeline in test_pipeline:
+    for pipeline in train_pipeline:
         if 'transforms' in pipeline:
             transforms = pipeline['transforms']
             break
@@ -320,7 +320,7 @@ if __name__ == '__main__':
         cfg.merge_from_dict(args.cfg_options)
 
     if args.shape is None:
-        img_scale = cfg.test_pipeline[1]['img_scale']
+        img_scale = cfg.train_pipeline[2]['img_scale']
         input_shape = (1, 3, img_scale[1], img_scale[0])
     elif len(args.shape) == 1:
         input_shape = (1, 3, args.shape[0], args.shape[0])
@@ -336,7 +336,7 @@ if __name__ == '__main__':
     if not args.input_img:
         args.input_img = osp.join(osp.dirname(__file__), '../../demo/demo.jpg')
 
-    normalize_cfg = parse_normalize_cfg(cfg.test_pipeline)
+    normalize_cfg = parse_normalize_cfg(cfg.train_pipeline)
 
     # convert model to onnx file
     pytorch2onnx(
