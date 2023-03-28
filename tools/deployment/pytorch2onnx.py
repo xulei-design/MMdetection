@@ -213,16 +213,10 @@ def pytorch2onnx(model,
 
 
 def parse_normalize_cfg(train_pipeline):
-    transforms = None
     for pipeline in train_pipeline:
-        if 'transforms' in pipeline:
-            transforms = pipeline['transforms']
-            break
-    assert transforms is not None, 'Failed to find `transforms`'
-    norm_config_li = [_ for _ in transforms if _['type'] == 'Normalize']
-    assert len(norm_config_li) == 1, '`norm_config` should only have one'
-    norm_config = norm_config_li[0]
-    return norm_config
+        if pipeline['type'] == 'Normalize':
+            return pipeline
+    raise Exception("Should have found Normalize config")
 
 
 def parse_args():
