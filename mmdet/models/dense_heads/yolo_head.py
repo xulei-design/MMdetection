@@ -286,6 +286,10 @@ class YOLOV3Head(BaseDenseHead):
             results_list.append(results)
         return results_list
 
+    
+
+    
+    
     def loss_by_feat(
             self,
             pred_maps: Sequence[Tensor],
@@ -341,6 +345,35 @@ class YOLOV3Head(BaseDenseHead):
             loss_xy=losses_xy,
             loss_wh=losses_wh)
 
+    
+    def cw_loss(self, pred_label, target_label, pos_mask):
+        # pred_label.shape = [batch_size, num_targets, num_classes]
+        max_vals, max_indices = torch.max(pred_label, dim=-1)  # [batch_size, num_targets]
+        # 将max_vals的形状从[batch_size, num_targets]扩展到[batch_size, num_targets, 1]
+        max_vals_expanded = max_vals.unsqueeze(-1)
+        # 创建一个同shape的张量,其值全为0,除了max_indices对应位置的值为1
+        one_hot_max = torch.zeros_like(pred_label).scatter_(-1, max_indices.unsqueeze(-1), 1)
+        # max_vals_expanded与one_hot_max相乘,得到形状为[batch_size, num_targets, num_classes]的张量
+        max_pred_scores = max_vals_expanded * one_hot_max
+        # 最大值对应原始标签的损失
+        max_loss = self.loss_cls(max_pred_scores, target_label, weight=pos_mask)  
+        
+        
+        # 计算pred_label_minus_max
+        pred_label_minus_max, _ = torch.max((pred_label - max_vals_expanded).clamp(min=0), dim=-1)
+        second_max_indices = pred_label_minus_max.nonzero()[:, -1]
+        # 创建第二大值的one-hot编码张量
+        one_hot_second_max = torch.zeros_like(pred_label).scatter_(-1, second_max_indices.unsqueeze(-1), 1)
+        # 计算第二大预测分数
+        second_max_pred_scores = (pred_label_minus_max.unsqueeze(-1) * one_hot_second_max)
+        # 使用second_max_pred_scores计算第二大值损失
+        second_max_loss = self.loss_cls(second_max_pred_scores, target_label, weight=pos_mask)
+        
+        # 计算损失差
+        loss = max_loss - second_max_loss
+        
+        return loss 
+
     def loss_by_feat_single(self, pred_map: Tensor, target_map: Tensor,
                             neg_map: Tensor) -> tuple:
         """Calculate the loss of a single scale level based on the features
@@ -374,13 +407,16 @@ class YOLOV3Head(BaseDenseHead):
         pred_wh = pred_map[..., 2:4]
         pred_conf = pred_map[..., 4]
         pred_label = pred_map[..., 5:]
-
+        
         target_xy = target_map[..., :2]
         target_wh = target_map[..., 2:4]
         target_conf = target_map[..., 4]
         target_label = target_map[..., 5:]
 
         loss_cls = self.loss_cls(pred_label, target_label, weight=pos_mask)
+        print("\n original loss_cls: ", loss_cls)
+        loss_cls = self.cw_loss(pred_label, target_label, pos_mask=pos_mask)
+        print("cw loss_cls: ", loss_cls)
         loss_conf = self.loss_conf(
             pred_conf, target_conf, weight=pos_and_neg_mask)
         loss_xy = self.loss_xy(pred_xy, target_xy, weight=pos_mask)

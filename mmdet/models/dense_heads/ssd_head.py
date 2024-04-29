@@ -212,6 +212,40 @@ class SSDHead(AnchorHead):
             bbox_preds.append(reg_conv(feat))
         return cls_scores, bbox_preds
 
+
+    def cw_loss(self, cls_score, labels, label_weights):
+        """
+        计算修改后的分类损失,同时最大化最大预测分数,最小化第二大预测分数
+        Args:
+            cls_score (Tensor): 形状为[num_targets, num_classes]的预测分数
+            labels (Tensor): 形状为[num_targets]的真实标签
+            label_weights (Tensor): 形状为[num_classes]的每一类的权重
+        Returns:
+            loss (Tensor): 最终的损失值
+        """
+        # 计算最大值损失
+        max_vals, max_indices = torch.max(cls_score, dim=-1)
+        max_vals_expanded = max_vals.unsqueeze(-1)
+        one_hot_max = torch.zeros_like(cls_score).scatter_(-1, max_indices.unsqueeze(-1), 1)
+        max_pred_scores = max_vals_expanded * one_hot_max
+        # max_loss = F.cross_entropy(max_pred_scores, labels, reduction='mean') * label_weights[labels].mean()
+        max_loss = F.cross_entropy(max_pred_scores, labels, reduction='mean') * label_weights[labels]
+        
+        # 计算第二大值损失
+        pred_label_minus_max, _ = torch.max((cls_score - max_vals_expanded).clamp(min=0), dim=-1)
+        second_max_indices = pred_label_minus_max.nonzero()[:, -1]
+        one_hot_second_max = torch.zeros_like(cls_score).scatter_(-1, second_max_indices.unsqueeze(-1), 1)
+        second_max_pred_scores = (pred_label_minus_max.unsqueeze(-1) * one_hot_second_max)
+        # second_max_loss = F.cross_entropy(second_max_pred_scores, labels, reduction='mean') * label_weights[labels].mean()
+        second_max_loss = F.cross_entropy(second_max_pred_scores, labels, reduction='mean') * label_weights[labels]
+        
+        # 计算损失差
+        loss = torch.abs(max_loss - second_max_loss)
+        # loss = max_loss - second_max_loss
+
+        return loss
+
+
     def loss_by_feat_single(self, cls_score: Tensor, bbox_pred: Tensor,
                             anchor: Tensor, labels: Tensor,
                             label_weights: Tensor, bbox_targets: Tensor,
@@ -245,6 +279,8 @@ class SSDHead(AnchorHead):
             feature map.
         """
 
+
+        # original cls loss
         loss_cls_all = F.cross_entropy(
             cls_score, labels, reduction='none') * label_weights
         # FG cat_id: [0, num_classes -1], BG cat_id: num_classes
@@ -258,10 +294,19 @@ class SSDHead(AnchorHead):
         if num_neg_samples > neg_inds.size(0):
             num_neg_samples = neg_inds.size(0)
         topk_loss_cls_neg, _ = loss_cls_all[neg_inds].topk(num_neg_samples)
+
         loss_cls_pos = loss_cls_all[pos_inds].sum()
         loss_cls_neg = topk_loss_cls_neg.sum()
         loss_cls = (loss_cls_pos + loss_cls_neg) / avg_factor
+        # print("\n original loss_cls: ", loss_cls)
 
+        # 使用 CW loss 替换原有损失计算
+        loss_cls_all = self.cw_loss(cls_score, labels, label_weights)
+        loss_cls_pos = loss_cls_all[pos_inds].sum()
+        loss_cls_neg = topk_loss_cls_neg.sum()
+        loss_cls = (loss_cls_pos + loss_cls_neg) / avg_factor
+        # print("cw loss_cls: ", loss_cls)
+        
         if self.reg_decoded_bbox:
             # When the regression loss (e.g. `IouLoss`, `GIouLoss`)
             # is applied directly on the decoded bounding boxes, it
@@ -359,4 +404,6 @@ class SSDHead(AnchorHead):
             all_bbox_targets,
             all_bbox_weights,
             avg_factor=avg_factor)
+        # print("\n \n ############ losses_cls: ", losses_cls)
+        # print(" ############ losses_bbox: ", losses_bbox)
         return dict(loss_cls=losses_cls, loss_bbox=losses_bbox)
