@@ -214,7 +214,9 @@ class SSDHead(AnchorHead):
 
 
     def cw_loss(self, cls_score, labels, label_weights):
-
+        """
+            最大logits-第二大logits
+        """
         # 计算最大值损失
         max_vals, max_indices = torch.max(cls_score, dim=-1)
         max_vals_expanded = max_vals.unsqueeze(-1)
