@@ -214,15 +214,7 @@ class SSDHead(AnchorHead):
 
 
     def cw_loss(self, cls_score, labels, label_weights):
-        """
-        计算修改后的分类损失,同时最大化最大预测分数,最小化第二大预测分数
-        Args:
-            cls_score (Tensor): 形状为[num_targets, num_classes]的预测分数
-            labels (Tensor): 形状为[num_targets]的真实标签
-            label_weights (Tensor): 形状为[num_classes]的每一类的权重
-        Returns:
-            loss (Tensor): 最终的损失值
-        """
+
         # 计算最大值损失
         max_vals, max_indices = torch.max(cls_score, dim=-1)
         max_vals_expanded = max_vals.unsqueeze(-1)
