@@ -30,7 +30,7 @@ class PipelineSwitchHook(Hook):
             # is True, so we need to force the dataloader's multi-process
             # restart. This is a very hacky approach.
             # Make it compatible with MultiImageMixDataset
-            if hasattr(train_loader.dataset, "dataset"):
+            if hasattr(train_loader.dataset, 'dataset'):
                 # Set the loading pipeline to the identity function
                 # Keep it compatible with "scale_factor" key, which 
                 # is not available otherwise.
