@@ -36,7 +36,8 @@ class PipelineSwitchHook(Hook):
                 # is not available otherwise.
                 train_loader.dataset.pipeline = Compose([lambda x: x])
                 # Rewrite the inner pipeline with the one given
-                train_loader.dataset.dataset.pipeline = Compose(self.switch_pipeline)
+                train_loader.dataset.dataset.pipeline = \
+                    Compose(self.switch_pipeline)
             else:
                 train_loader.dataset.pipeline = \
                     Compose(self.switch_pipeline)
