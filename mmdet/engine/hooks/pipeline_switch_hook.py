@@ -32,7 +32,7 @@ class PipelineSwitchHook(Hook):
             # Make it compatible with MultiImageMixDataset
             if hasattr(train_loader.dataset, 'dataset'):
                 # Set the loading pipeline to the identity function
-                # Keep it compatible with "scale_factor" key, which 
+                # Keep it compatible with "scale_factor" key, which
                 # is not available otherwise.
                 train_loader.dataset.pipeline = Compose([lambda x: x])
                 # Rewrite the inner pipeline with the one given
