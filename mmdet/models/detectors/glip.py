@@ -2,6 +2,7 @@
 import copy
 import re
 import warnings
+from os.path import expanduser
 from typing import Optional, Tuple, Union
 
 import torch
@@ -11,7 +12,6 @@ from mmdet.registry import MODELS
 from mmdet.structures import SampleList
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
 from .single_stage import SingleStageDetector
-from os.path import expanduser
 
 
 def find_noun_phrases(caption: str, verbose: bool = True) -> list:
@@ -28,11 +28,12 @@ def find_noun_phrases(caption: str, verbose: bool = True) -> list:
     """
     try:
         import nltk
-        nltk.download('punkt', download_dir=expanduser('~/nltk_data'),
-                      quiet=not verbose)
-        nltk.download('averaged_perceptron_tagger',
-                      download_dir=expanduser('~/nltk_data'),
-                      quiet=not verbose)
+        nltk.download(
+            'punkt', download_dir=expanduser('~/nltk_data'), quiet=not verbose)
+        nltk.download(
+            'averaged_perceptron_tagger',
+            download_dir=expanduser('~/nltk_data'),
+            quiet=not verbose)
     except ImportError:
         raise RuntimeError('nltk is not installed, please install it by: '
                            'pip install nltk.')
@@ -276,12 +277,11 @@ class GLIP(SingleStageDetector):
         return caption_string, tokens_positive
 
     def get_tokens_and_prompts(
-        self,
-        original_caption: Union[str, list, tuple],
-        custom_entities: bool = False,
-        enhanced_text_prompts: Optional[ConfigType] = None,
-        verbose: bool = False
-    ) -> Tuple[dict, str, list, list]:
+            self,
+            original_caption: Union[str, list, tuple],
+            custom_entities: bool = False,
+            enhanced_text_prompts: Optional[ConfigType] = None,
+            verbose: bool = False) -> Tuple[dict, str, list, list]:
         """Get the tokens positive and prompts for the caption."""
         if isinstance(original_caption, (list, tuple)) or custom_entities:
             if custom_entities and isinstance(original_caption, str):
@@ -306,8 +306,8 @@ class GLIP(SingleStageDetector):
             original_caption = original_caption.strip(self._special_tokens)
             tokenized = self.language_model.tokenizer([original_caption],
                                                       return_tensors='pt')
-            tokens_positive, noun_phrases = run_ner(original_caption,
-                                                    verbose=verbose)
+            tokens_positive, noun_phrases = run_ner(
+                original_caption, verbose=verbose)
             entities = noun_phrases
             caption_string = original_caption
 
@@ -320,13 +320,12 @@ class GLIP(SingleStageDetector):
         return positive_map_label_to_token, positive_map
 
     def get_tokens_positive_and_prompts(
-        self,
-        original_caption: Union[str, list, tuple],
-        custom_entities: bool = False,
-        enhanced_text_prompt: Optional[ConfigType] = None,
-        tokens_positive: Optional[list] = None,
-        verbose: bool = False
-    ) -> Tuple[dict, str, Tensor, list]:
+            self,
+            original_caption: Union[str, list, tuple],
+            custom_entities: bool = False,
+            enhanced_text_prompt: Optional[ConfigType] = None,
+            tokens_positive: Optional[list] = None,
+            verbose: bool = False) -> Tuple[dict, str, Tensor, list]:
         if tokens_positive is not None:
             if tokens_positive == -1:
                 if not original_caption.endswith('.'):
@@ -418,7 +417,8 @@ class GLIP(SingleStageDetector):
             positive_map_chunked, \
             entities_chunked
 
-    def loss(self, batch_inputs: Tensor,
+    def loss(self,
+             batch_inputs: Tensor,
              batch_data_samples: SampleList,
              verbose: bool = False) -> Union[dict, list]:
         # TODO: Only open vocabulary tasks are supported for training now.

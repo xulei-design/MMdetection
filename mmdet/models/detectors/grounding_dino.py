@@ -132,12 +132,11 @@ class GroundingDINO(DINO):
         return caption_string, tokens_positive
 
     def get_tokens_and_prompts(
-        self,
-        original_caption: Union[str, list, tuple],
-        custom_entities: bool = False,
-        enhanced_text_prompts: Optional[ConfigType] = None,
-        verbose: bool = False
-    ) -> Tuple[dict, str, list]:
+            self,
+            original_caption: Union[str, list, tuple],
+            custom_entities: bool = False,
+            enhanced_text_prompts: Optional[ConfigType] = None,
+            verbose: bool = False) -> Tuple[dict, str, list]:
         """Get the tokens positive and prompts for the caption."""
         if isinstance(original_caption, (list, tuple)) or custom_entities:
             if custom_entities and isinstance(original_caption, str):
@@ -177,8 +176,8 @@ class GroundingDINO(DINO):
                 padding='max_length'
                 if self.language_model.pad_to_max else 'longest',
                 return_tensors='pt')
-            tokens_positive, noun_phrases = run_ner(original_caption,
-                                                    verbose=verbose)
+            tokens_positive, noun_phrases = run_ner(
+                original_caption, verbose=verbose)
             entities = noun_phrases
             caption_string = original_caption
 
@@ -195,13 +194,12 @@ class GroundingDINO(DINO):
         return positive_map_label_to_token, positive_map
 
     def get_tokens_positive_and_prompts(
-        self,
-        original_caption: Union[str, list, tuple],
-        custom_entities: bool = False,
-        enhanced_text_prompt: Optional[ConfigType] = None,
-        tokens_positive: Optional[list] = None,
-        verbose: bool = False
-    ) -> Tuple[dict, str, Tensor, list]:
+            self,
+            original_caption: Union[str, list, tuple],
+            custom_entities: bool = False,
+            enhanced_text_prompt: Optional[ConfigType] = None,
+            tokens_positive: Optional[list] = None,
+            verbose: bool = False) -> Tuple[dict, str, Tensor, list]:
         """Get the tokens positive and prompts for the caption.
 
         Args:
@@ -420,7 +418,8 @@ class GroundingDINO(DINO):
         head_inputs_dict['text_token_mask'] = text_token_mask
         return decoder_inputs_dict, head_inputs_dict
 
-    def loss(self, batch_inputs: Tensor,
+    def loss(self,
+             batch_inputs: Tensor,
              batch_data_samples: SampleList,
              verbose: bool = False) -> Union[dict, list]:
         text_prompts = [
