@@ -2,6 +2,7 @@
 import copy
 import re
 import warnings
+from os.path import expanduser
 from typing import Optional, Tuple, Union
 
 import torch
@@ -13,7 +14,7 @@ from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
 from .single_stage import SingleStageDetector
 
 
-def find_noun_phrases(caption: str) -> list:
+def find_noun_phrases(caption: str, verbose: bool = True) -> list:
     """Find noun phrases in a caption using nltk.
     Args:
         caption (str): The caption to analyze.
@@ -27,8 +28,12 @@ def find_noun_phrases(caption: str) -> list:
     """
     try:
         import nltk
-        nltk.download('punkt', download_dir='~/nltk_data')
-        nltk.download('averaged_perceptron_tagger', download_dir='~/nltk_data')
+        nltk.download(
+            'punkt', download_dir=expanduser('~/nltk_data'), quiet=not verbose)
+        nltk.download(
+            'averaged_perceptron_tagger',
+            download_dir=expanduser('~/nltk_data'),
+            quiet=not verbose)
     except ImportError:
         raise RuntimeError('nltk is not installed, please install it by: '
                            'pip install nltk.')
@@ -66,7 +71,7 @@ def remove_punctuation(text: str) -> str:
     return text.strip()
 
 
-def run_ner(caption: str) -> Tuple[list, list]:
+def run_ner(caption: str, verbose: bool = False) -> Tuple[list, list]:
     """Run NER on a caption and return the tokens and noun phrases.
     Args:
         caption (str): The input caption.
@@ -76,10 +81,11 @@ def run_ner(caption: str) -> Tuple[list, list]:
             - tokens_positive (List): A list of token positions.
             - noun_phrases (List): A list of noun phrases.
     """
-    noun_phrases = find_noun_phrases(caption)
+    noun_phrases = find_noun_phrases(caption, verbose=verbose)
     noun_phrases = [remove_punctuation(phrase) for phrase in noun_phrases]
     noun_phrases = [phrase for phrase in noun_phrases if phrase != '']
-    print('noun_phrases:', noun_phrases)
+    if verbose:
+        print('noun_phrases:', noun_phrases)
     relevant_phrases = noun_phrases
     labels = noun_phrases
 
@@ -271,11 +277,11 @@ class GLIP(SingleStageDetector):
         return caption_string, tokens_positive
 
     def get_tokens_and_prompts(
-        self,
-        original_caption: Union[str, list, tuple],
-        custom_entities: bool = False,
-        enhanced_text_prompts: Optional[ConfigType] = None
-    ) -> Tuple[dict, str, list, list]:
+            self,
+            original_caption: Union[str, list, tuple],
+            custom_entities: bool = False,
+            enhanced_text_prompts: Optional[ConfigType] = None,
+            verbose: bool = False) -> Tuple[dict, str, list, list]:
         """Get the tokens positive and prompts for the caption."""
         if isinstance(original_caption, (list, tuple)) or custom_entities:
             if custom_entities and isinstance(original_caption, str):
@@ -300,7 +306,8 @@ class GLIP(SingleStageDetector):
             original_caption = original_caption.strip(self._special_tokens)
             tokenized = self.language_model.tokenizer([original_caption],
                                                       return_tensors='pt')
-            tokens_positive, noun_phrases = run_ner(original_caption)
+            tokens_positive, noun_phrases = run_ner(
+                original_caption, verbose=verbose)
             entities = noun_phrases
             caption_string = original_caption
 
@@ -313,12 +320,12 @@ class GLIP(SingleStageDetector):
         return positive_map_label_to_token, positive_map
 
     def get_tokens_positive_and_prompts(
-        self,
-        original_caption: Union[str, list, tuple],
-        custom_entities: bool = False,
-        enhanced_text_prompt: Optional[ConfigType] = None,
-        tokens_positive: Optional[list] = None,
-    ) -> Tuple[dict, str, Tensor, list]:
+            self,
+            original_caption: Union[str, list, tuple],
+            custom_entities: bool = False,
+            enhanced_text_prompt: Optional[ConfigType] = None,
+            tokens_positive: Optional[list] = None,
+            verbose: bool = False) -> Tuple[dict, str, Tensor, list]:
         if tokens_positive is not None:
             if tokens_positive == -1:
                 if not original_caption.endswith('.'):
@@ -354,7 +361,8 @@ class GLIP(SingleStageDetector):
         else:
             tokenized, caption_string, tokens_positive, entities = \
                 self.get_tokens_and_prompts(
-                    original_caption, custom_entities, enhanced_text_prompt)
+                    original_caption, custom_entities, enhanced_text_prompt,
+                    verbose=verbose)
             positive_map_label_to_token, positive_map = self.get_positive_map(
                 tokenized, tokens_positive)
             if tokenized.input_ids.shape[1] > self.language_model.max_tokens:
@@ -367,7 +375,8 @@ class GLIP(SingleStageDetector):
     def get_tokens_positive_and_prompts_chunked(
             self,
             original_caption: Union[list, tuple],
-            enhanced_text_prompts: Optional[ConfigType] = None):
+            enhanced_text_prompts: Optional[ConfigType] = None,
+            verbose: bool = False):
         chunked_size = self.test_cfg.get('chunked_size', -1)
         original_caption = [clean_label_name(i) for i in original_caption]
 
@@ -408,8 +417,10 @@ class GLIP(SingleStageDetector):
             positive_map_chunked, \
             entities_chunked
 
-    def loss(self, batch_inputs: Tensor,
-             batch_data_samples: SampleList) -> Union[dict, list]:
+    def loss(self,
+             batch_inputs: Tensor,
+             batch_data_samples: SampleList,
+             verbose: bool = False) -> Union[dict, list]:
         # TODO: Only open vocabulary tasks are supported for training now.
         text_prompts = [
             data_samples.text for data_samples in batch_data_samples
@@ -427,7 +438,7 @@ class GLIP(SingleStageDetector):
             # so there is no need to calculate them multiple times.
             tokenized, caption_string, tokens_positive, _ = \
                 self.get_tokens_and_prompts(
-                    text_prompts[0], True)
+                    text_prompts[0], True, verbose=verbose)
             new_text_prompts = [caption_string] * len(batch_inputs)
             for gt_label in gt_labels:
                 new_tokens_positive = [
@@ -440,7 +451,7 @@ class GLIP(SingleStageDetector):
             for text_prompt, gt_label in zip(text_prompts, gt_labels):
                 tokenized, caption_string, tokens_positive, _ = \
                     self.get_tokens_and_prompts(
-                        text_prompt, True)
+                        text_prompt, True, verbose=verbose)
                 new_tokens_positive = [
                     tokens_positive[label] for label in gt_label
                 ]
