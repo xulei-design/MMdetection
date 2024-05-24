@@ -28,8 +28,8 @@ def find_noun_phrases(caption: str, verbose: bool = True) -> list:
     """
     try:
         import nltk
-        nltk.download('punkt', download_dir=expanduser('~/nltk_data'), quiet=verbose)
-        nltk.download('averaged_perceptron_tagger', download_dir=expanduser('~/nltk_data'), quiet=verbose)
+        nltk.download('punkt', download_dir=expanduser('~/nltk_data'), quiet=not verbose)
+        nltk.download('averaged_perceptron_tagger', download_dir=expanduser('~/nltk_data'), quiet=not verbose)
     except ImportError:
         raise RuntimeError('nltk is not installed, please install it by: '
                            'pip install nltk.')
