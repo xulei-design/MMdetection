@@ -28,8 +28,10 @@ def find_noun_phrases(caption: str, verbose: bool = True) -> list:
     """
     try:
         import nltk
-        nltk.download('punkt', download_dir=expanduser('~/nltk_data'), quiet=not verbose)
-        nltk.download('averaged_perceptron_tagger', download_dir=expanduser('~/nltk_data'), quiet=not verbose)
+        nltk.download('punkt', download_dir=expanduser('~/nltk_data'),
+                      quiet=not verbose)
+        nltk.download('averaged_perceptron_tagger', download_dir=expanduser('~/nltk_data'),
+                      quiet=not verbose)
     except ImportError:
         raise RuntimeError('nltk is not installed, please install it by: '
                            'pip install nltk.')
@@ -77,7 +79,7 @@ def run_ner(caption: str, verbose: bool = False) -> Tuple[list, list]:
             - tokens_positive (List): A list of token positions.
             - noun_phrases (List): A list of noun phrases.
     """
-    noun_phrases = find_noun_phrases(caption,verbose=verbose)
+    noun_phrases = find_noun_phrases(caption, verbose=verbose)
     noun_phrases = [remove_punctuation(phrase) for phrase in noun_phrases]
     noun_phrases = [phrase for phrase in noun_phrases if phrase != '']
     if verbose:
@@ -303,7 +305,8 @@ class GLIP(SingleStageDetector):
             original_caption = original_caption.strip(self._special_tokens)
             tokenized = self.language_model.tokenizer([original_caption],
                                                       return_tensors='pt')
-            tokens_positive, noun_phrases = run_ner(original_caption, verbose=verbose)
+            tokens_positive, noun_phrases = run_ner(original_caption,
+                                                    verbose=verbose)
             entities = noun_phrases
             caption_string = original_caption
 
@@ -321,7 +324,7 @@ class GLIP(SingleStageDetector):
         custom_entities: bool = False,
         enhanced_text_prompt: Optional[ConfigType] = None,
         tokens_positive: Optional[list] = None,
-        verbose:bool = False
+        verbose: bool = False
     ) -> Tuple[dict, str, Tensor, list]:
         if tokens_positive is not None:
             if tokens_positive == -1:

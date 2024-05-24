@@ -177,7 +177,8 @@ class GroundingDINO(DINO):
                 padding='max_length'
                 if self.language_model.pad_to_max else 'longest',
                 return_tensors='pt')
-            tokens_positive, noun_phrases = run_ner(original_caption, verbose=verbose)
+            tokens_positive, noun_phrases = run_ner(original_caption,
+                                                    verbose=verbose)
             entities = noun_phrases
             caption_string = original_caption
 
@@ -252,7 +253,8 @@ class GroundingDINO(DINO):
         else:
             tokenized, caption_string, tokens_positive, entities = \
                 self.get_tokens_and_prompts(
-                    original_caption, custom_entities, enhanced_text_prompt, verbose=verbose)
+                    original_caption, custom_entities, enhanced_text_prompt,
+                    verbose=verbose)
             positive_map_label_to_token, positive_map = self.get_positive_map(
                 tokenized, tokens_positive)
         return positive_map_label_to_token, caption_string, \
@@ -458,7 +460,7 @@ class GroundingDINO(DINO):
                 # so there is no need to calculate them multiple times.
                 tokenized, caption_string, tokens_positive, _ = \
                     self.get_tokens_and_prompts(
-                        text_prompts[0], True, verbose = verbose)
+                        text_prompts[0], True, verbose=verbose)
                 new_text_prompts = [caption_string] * len(batch_inputs)
                 for gt_label in gt_labels:
                     new_tokens_positive = [
