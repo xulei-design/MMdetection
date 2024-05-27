@@ -217,7 +217,7 @@ class RandomSamplingNegPos(BaseTransform):
 
             negative_max_length -= len(tokenized)
 
-            if negative_max_length > 0:
+            if negative_max_length >= 0:
                 screened_negative_label_list.append(negative_label)
             else:
                 break
