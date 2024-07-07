@@ -99,6 +99,7 @@ class DetVisualizationHook(Hook):
             img_path = outputs[0].img_path
             img_bytes = get(img_path, backend_args=self.backend_args)
             img = mmcv.imfrombytes(img_bytes, channel_order='rgb')
+            img = mmcv.Resize(outputs[0].scale_factor)
             
             self._visualizer.add_datasample(
                 osp.basename(img_path) if self.show else 'val_img',
