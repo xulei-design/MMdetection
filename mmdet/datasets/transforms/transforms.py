@@ -1635,7 +1635,8 @@ class Albu(BaseTransform):
             self.aug = Compose([self.albu_builder(t) for t in self.transforms],
                                bbox_params=self.bbox_params, strict=False)
         else:
-            self.aug = Compose([self.albu_builder(t) for t in self.transforms])
+            self.aug = Compose([self.albu_builder(t) for t in self.transforms],
+                               bbox_params=self.bbox_params)
 
         if not keymap:
             self.keymap_to_albu = {
