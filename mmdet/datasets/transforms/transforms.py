@@ -32,9 +32,13 @@ except ImportError:
 try:
     import albumentations
     from albumentations import Compose
+    # This assumes albumentations' versions are just ints separated by
+    # periods, e.g. 1.4.11, allowing us to avoid a new dependency.
+    ALBU_VERSION = list(map(int, albumentations.__version__.split(".")))[:3]
 except ImportError:
     albumentations = None
     Compose = None
+    ALBU_VERSION = None
 
 Number = Union[int, float]
 
@@ -1627,8 +1631,11 @@ class Albu(BaseTransform):
 
         self.bbox_params = (
             self.albu_builder(bbox_params) if bbox_params else None)
-        self.aug = Compose([self.albu_builder(t) for t in self.transforms],
-                           bbox_params=self.bbox_params)
+        if ALBU_VERSION is not None and ALBU_VERSION >= (1, 4, 11):
+            self.aug = Compose([self.albu_builder(t) for t in self.transforms],
+                               bbox_params=self.bbox_params, strict=False)
+        else:
+            self.aug = Compose([self.albu_builder(t) for t in self.transforms])
 
         if not keymap:
             self.keymap_to_albu = {
