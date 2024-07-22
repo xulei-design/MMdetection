@@ -1634,7 +1634,8 @@ class Albu(BaseTransform):
             self.albu_builder(bbox_params) if bbox_params else None)
         if ALBU_VERSION is not None and ALBU_VERSION >= (1, 4, 11):
             self.aug = Compose([self.albu_builder(t) for t in self.transforms],
-                               bbox_params=self.bbox_params, strict=False)
+                               bbox_params=self.bbox_params,
+                               strict=False)
         else:
             self.aug = Compose([self.albu_builder(t) for t in self.transforms],
                                bbox_params=self.bbox_params)
