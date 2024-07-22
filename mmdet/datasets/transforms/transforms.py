@@ -35,7 +35,7 @@ try:
 
     # This assumes albumentations' versions are just ints separated by
     # periods, e.g. 1.4.11, allowing us to avoid a new dependency.
-    ALBU_VERSION = tuple(map(int, albumentations.__version__.split('.')))[:3]
+    ALBU_VERSION = tuple(map(int, albumentations.__version__.split('.')))
 except ImportError:
     albumentations = None
     Compose = None
