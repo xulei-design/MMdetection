@@ -278,6 +278,10 @@ class DetLocalVisualizer(Visualizer):
 
         self.set_image(image)
 
+        # if segms is empty, return the image
+        if len(segms) == 0:
+            return self.get_image()
+
         # draw segm
         polygons = []
         for i, mask in enumerate(segms):
