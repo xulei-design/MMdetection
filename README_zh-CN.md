@@ -282,7 +282,7 @@ arxiv 技术报告：https://arxiv.org/abs/2401.02361
           <li><a href="configs/panoptic_fpn">Panoptic FPN (CVPR'2019)</a></li>
           <li><a href="configs/maskformer">MaskFormer (NeurIPS'2021)</a></li>
           <li><a href="configs/mask2former">Mask2Former (ArXiv'2021)</a></li>
-          <li><a href="configs/XDecoder">XDecoder (CVPR'2023)</a></li>
+          <li><a href="projects/XDecoder">XDecoder (CVPR'2023)</a></li>
         </ul>
       </td>
       <td>
