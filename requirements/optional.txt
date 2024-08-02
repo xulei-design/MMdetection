@@ -1,5 +1,6 @@
 cityscapesscripts
 emoji
 fairscale
+faster-coco-eval
 imagecorruptions
 scikit-learn

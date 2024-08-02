@@ -1,4 +1,3 @@
-faster-coco-eval
 matplotlib
 numpy
 pycocotools

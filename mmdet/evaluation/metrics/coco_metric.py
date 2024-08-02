@@ -8,8 +8,6 @@ from typing import Dict, List, Optional, Sequence, Union
 
 import numpy as np
 import torch
-from faster_coco_eval import COCO as FasterCOCO
-from faster_coco_eval import COCOeval_faster
 from mmengine.evaluator import BaseMetric
 from mmengine.fileio import dump, get_local_path, load
 from mmengine.logging import MMLogger
@@ -19,6 +17,13 @@ from mmdet.datasets.api_wrappers import COCO, COCOeval, COCOevalMP
 from mmdet.registry import METRICS
 from mmdet.structures.mask import encode_mask_results
 from ..functional import eval_recalls
+
+try:
+    from faster_coco_eval import COCO as FasterCOCO
+    from faster_coco_eval import COCOeval_faster
+except ImportError:
+    FasterCOCO = None
+    COCOeval_faster = None
 
 
 @METRICS.register_module()
@@ -102,6 +107,8 @@ class CocoMetric(BaseMetric):
         self.use_mp_eval = use_mp_eval
         # whether to use Faster Coco Eval, default False
         self.use_faster_coco_eval = use_faster_coco_eval
+        if FasterCOCO is None:
+            raise RuntimeError('faster-coco-eval is not installed')
 
         # proposal_nums used to compute recall or precision.
         self.proposal_nums = list(proposal_nums)

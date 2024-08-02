@@ -1,5 +1,6 @@
 import os.path as osp
 import tempfile
+import unittest
 from unittest import TestCase
 
 import numpy as np
@@ -9,6 +10,11 @@ from mmengine.fileio import dump
 from parameterized import parameterized
 
 from mmdet.evaluation import CocoMetric
+
+try:
+    from faster_coco_eval import COCO as FasterCOCO
+except ImportError:
+    FasterCOCO = None
 
 
 class TestCocoMetric(TestCase):
@@ -114,6 +120,9 @@ class TestCocoMetric(TestCase):
 
     @parameterized.expand([False, True])
     def test_evaluate(self, use_faster_coco_eval):
+        if use_faster_coco_eval and (FasterCOCO is None):
+            return unittest.skip('faster-coco-eval is not installed')
+
         # create dummy data
         fake_json_file = osp.join(self.tmp_dir.name, 'fake_data.json')
         self._create_dummy_coco_json(fake_json_file)
@@ -209,6 +218,9 @@ class TestCocoMetric(TestCase):
 
     @parameterized.expand([False, True])
     def test_classwise_evaluate(self, use_faster_coco_eval):
+        if use_faster_coco_eval and (FasterCOCO is None):
+            return unittest.skip('faster-coco-eval is not installed')
+
         # create dummy data
         fake_json_file = osp.join(self.tmp_dir.name, 'fake_data.json')
         self._create_dummy_coco_json(fake_json_file)
@@ -241,6 +253,9 @@ class TestCocoMetric(TestCase):
 
     @parameterized.expand([False, True])
     def test_manually_set_iou_thrs(self, use_faster_coco_eval):
+        if use_faster_coco_eval and (FasterCOCO is None):
+            return unittest.skip('faster-coco-eval is not installed')
+
         # create dummy data
         fake_json_file = osp.join(self.tmp_dir.name, 'fake_data.json')
         self._create_dummy_coco_json(fake_json_file)
@@ -257,6 +272,9 @@ class TestCocoMetric(TestCase):
 
     @parameterized.expand([False, True])
     def test_fast_eval_recall(self, use_faster_coco_eval):
+        if use_faster_coco_eval and (FasterCOCO is None):
+            return unittest.skip('faster-coco-eval is not installed')
+
         # create dummy data
         fake_json_file = osp.join(self.tmp_dir.name, 'fake_data.json')
         self._create_dummy_coco_json(fake_json_file)
@@ -291,6 +309,9 @@ class TestCocoMetric(TestCase):
 
     @parameterized.expand([False, True])
     def test_evaluate_proposal(self, use_faster_coco_eval):
+        if use_faster_coco_eval and (FasterCOCO is None):
+            return unittest.skip('faster-coco-eval is not installed')
+
         # create dummy data
         fake_json_file = osp.join(self.tmp_dir.name, 'fake_data.json')
         self._create_dummy_coco_json(fake_json_file)
@@ -319,6 +340,9 @@ class TestCocoMetric(TestCase):
 
     @parameterized.expand([False, True])
     def test_empty_results(self, use_faster_coco_eval):
+        if use_faster_coco_eval and (FasterCOCO is None):
+            return unittest.skip('faster-coco-eval is not installed')
+
         # create dummy data
         fake_json_file = osp.join(self.tmp_dir.name, 'fake_data.json')
         self._create_dummy_coco_json(fake_json_file)
@@ -345,6 +369,9 @@ class TestCocoMetric(TestCase):
 
     @parameterized.expand([False, True])
     def test_evaluate_without_json(self, use_faster_coco_eval):
+        if use_faster_coco_eval and (FasterCOCO is None):
+            return unittest.skip('faster-coco-eval is not installed')
+
         dummy_pred = self._create_dummy_results()
 
         dummy_mask = np.zeros((10, 10), order='F', dtype=np.uint8)
@@ -412,6 +439,9 @@ class TestCocoMetric(TestCase):
 
     @parameterized.expand([False, True])
     def test_format_only(self, use_faster_coco_eval):
+        if use_faster_coco_eval and (FasterCOCO is None):
+            return unittest.skip('faster-coco-eval is not installed')
+
         # create dummy data
         fake_json_file = osp.join(self.tmp_dir.name, 'fake_data.json')
         self._create_dummy_coco_json(fake_json_file)
