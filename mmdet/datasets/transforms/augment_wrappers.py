@@ -77,9 +77,9 @@ def level_to_mag(level: Optional[int], min_mag: float,
                  max_mag: float) -> float:
     """Map from level to magnitude."""
     if level is None:
-        return round(np.random.rand() * (max_mag - min_mag) + min_mag, 1)
+        return round(np.random.rand() * (max_mag - min_mag) + min_mag, 2)
     else:
-        return round(level / _MAX_LEVEL * (max_mag - min_mag) + min_mag, 1)
+        return round(level / _MAX_LEVEL * (max_mag - min_mag) + min_mag, 2)
 
 
 @TRANSFORMS.register_module()

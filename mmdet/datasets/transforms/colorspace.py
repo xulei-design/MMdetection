@@ -491,3 +491,33 @@ class Invert(ColorTransform):
         """Invert the image."""
         img = results['img']
         results['img'] = mmcv.iminvert(img).astype(img.dtype)
+
+
+@TRANSFORMS.register_module()
+class Invert4Mix(ColorTransform):
+    """Invert and translate images.
+
+    Required Keys:
+
+    - img
+
+    Modified Keys:
+
+    - img
+
+    Args:
+        prob (float): The probability for performing invert therefore should
+             be in range [0, 1]. Defaults to 1.0.
+        level (int, optional): No use for Invert transformation.
+            Defaults to None.
+        min_mag (float): No use for Invert transformation. Defaults to 0.1.
+        max_mag (float): No use for Invert transformation. Defaults to 1.9.
+    """
+
+    def _transform_img(self, results: dict, mag: float) -> None:
+        """Invert the image."""
+        img = results['img']
+        img = mmcv.iminvert(img).astype(img.dtype)
+        img = mmcv.imtranslate(img, 1, 'horizontal')
+        img = mmcv.imtranslate(img, 1, 'vertical')
+        results['img'] = img.astype(img.dtype)

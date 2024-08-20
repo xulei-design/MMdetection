@@ -2,13 +2,14 @@
 from .augment_wrappers import AutoAugment, RandAugment
 from .colorspace import (AutoContrast, Brightness, Color, ColorTransform,
                          Contrast, Equalize, Invert, Posterize, Sharpness,
-                         Solarize, SolarizeAdd)
+                         Solarize, SolarizeAdd, Invert4Mix)
 from .formatting import (ImageToTensor, PackDetInputs, PackReIDInputs,
                          PackTrackInputs, ToTensor, Transpose)
 from .frame_sampling import BaseFrameSample, UniformRefFrameSample
 from .geometric import (GeomTransform, Rotate, ShearX, ShearY, TranslateX,
                         TranslateY)
 from .instaboost import InstaBoost
+from .oa_mix import OAMix
 from .loading import (FilterAnnotations, InferencerLoader, LoadAnnotations,
                       LoadEmptyAnnotations, LoadImageFromNDArray,
                       LoadMultiChannelImageFromFiles, LoadPanopticAnnotations,
@@ -35,11 +36,11 @@ __all__ = [
     'Mosaic', 'MixUp', 'RandomAffine', 'YOLOXHSVRandomAug', 'CopyPaste',
     'FilterAnnotations', 'Pad', 'GeomTransform', 'ColorTransform',
     'RandAugment', 'Sharpness', 'Solarize', 'SolarizeAdd', 'Posterize',
-    'AutoContrast', 'Invert', 'MultiBranch', 'RandomErasing',
+    'AutoContrast', 'Invert', 'Invert4Mix', 'MultiBranch', 'RandomErasing',
     'LoadEmptyAnnotations', 'RandomOrder', 'CachedMosaic', 'CachedMixUp',
     'FixShapeResize', 'ProposalBroadcaster', 'InferencerLoader',
     'LoadTrackAnnotations', 'BaseFrameSample', 'UniformRefFrameSample',
     'PackTrackInputs', 'PackReIDInputs', 'FixScaleResize',
     'ResizeShortestEdge', 'GTBoxSubOne_GLIP', 'RandomFlip_GLIP',
-    'RandomSamplingNegPos', 'LoadTextAnnotations'
+    'RandomSamplingNegPos', 'LoadTextAnnotations' 'OAMix',
 ]
