@@ -4,14 +4,6 @@ _base_ = [
     '../_base_/default_runtime.py', '../_base_/schedules/schedule_1x.py'
 ]
 
-
-# OA-Mix
-oamix_config=dict(
-    type='OAMix', version='oamix',
-    box_scale=(0.05, 0.3), box_ratio=(3, 0.33),
-    sigma_ratio=0.2, score_thresh=10,
-)
-
 backend_args = None
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
@@ -21,14 +13,17 @@ train_pipeline = [
         scale=[(2048, 800), (2048, 1024)],
         keep_ratio=True),
     dict(type='RandomFlip', prob=0.5),
-    oamix_config,
+    dict(
+        type='OAMix',
+        version='oamix',
+        box_scale=(0.05, 0.3),
+        box_ratio=(3, 0.33),
+        sigma_ratio=0.2,
+        score_thresh=10),
     dict(type='PackDetInputs')
 ]
 train_dataloader = dict(
-    num_workers=8,
-    dataset=dict(dataset=dict(pipeline=train_pipeline))
-)
-
+    num_workers=8, dataset=dict(dataset=dict(pipeline=train_pipeline)))
 
 # Model
 model = dict(

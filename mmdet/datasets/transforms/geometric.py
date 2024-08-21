@@ -756,19 +756,21 @@ class TranslateY(GeomTransform):
 
 @TRANSFORMS.register_module()
 class BBoxShearX(ShearX):
+
     def _transform_img(self, results: dict, mag: float) -> None:
         img_orig = results['img'].copy()
         (h_img, w_img, c_img) = img_orig.shape
 
         img = np.zeros_like(results['img'], dtype=np.float32)
-        for idx, (bbox, mask) in enumerate(zip(results['bboxes'], results['masks'])):
+        for idx, (bbox,
+                  mask) in enumerate(zip(results['bboxes'], results['masks'])):
             cy = (bbox[1] + bbox[3]) / 2
 
-            shear_matrix = np.array([[1, mag, -mag*cy], [0, 1, 0]], dtype=np.float32)
+            shear_matrix = np.array([[1, mag, -mag * cy], [0, 1, 0]],
+                                    dtype=np.float32)
             shear_img = cv2.warpAffine(
                 img_orig,
-                shear_matrix,
-                (w_img, h_img),
+                shear_matrix, (w_img, h_img),
                 borderValue=tuple([0] * 3),
                 flags=cv2.INTER_LINEAR)
             img = (1.0 - mask) * img + mask * shear_img
@@ -786,19 +788,20 @@ class BBoxShearX(ShearX):
 
 @TRANSFORMS.register_module()
 class BBoxShearY(ShearY):
+
     def _transform_img(self, results: dict, mag: float) -> None:
         img_orig = results['img'].copy()
         (h_img, w_img, c_img) = img_orig.shape
 
         img = np.zeros_like(results['img'], dtype=np.float32)
-        for idx, (bbox, mask) in enumerate(zip(results['bboxes'], results['masks'])):
+        for idx, (bbox,
+                  mask) in enumerate(zip(results['bboxes'], results['masks'])):
             cx = (bbox[0] + bbox[2]) / 2
 
             shear_matrix = np.float32([[1, 0, 0], [mag, 1, -mag * cx]])
             shear_img = cv2.warpAffine(
                 img_orig,
-                shear_matrix,
-                (w_img, h_img),
+                shear_matrix, (w_img, h_img),
                 borderValue=tuple([0] * 3),
                 flags=cv2.INTER_LINEAR)
             img = (1.0 - mask) * img + mask * shear_img
@@ -816,20 +819,22 @@ class BBoxShearY(ShearY):
 
 @TRANSFORMS.register_module()
 class BBoxRotate(Rotate):
+
     def _transform_img(self, results: dict, mag: float) -> None:
         img_orig = results['img'].copy()
         (h_img, w_img, c_img) = img_orig.shape
 
         img = np.zeros_like(results['img'], dtype=np.float32)
-        for idx, (bbox, mask) in enumerate(zip(results['bboxes'], results['masks'])):
+        for idx, (bbox,
+                  mask) in enumerate(zip(results['bboxes'], results['masks'])):
             cx = (bbox[0] + bbox[2]) / 2
             cy = (bbox[1] + bbox[3]) / 2
 
-            translate_matrix = np.float32([[1, 0, w_img//2 - cx], [0, 1, h_img//2 - cy]])
+            translate_matrix = np.float32([[1, 0, w_img // 2 - cx],
+                                           [0, 1, h_img // 2 - cy]])
             translated_img = cv2.warpAffine(
                 img_orig,
-                translate_matrix,
-                (w_img, h_img),
+                translate_matrix, (w_img, h_img),
                 borderValue=tuple([0] * 3),
                 flags=cv2.INTER_LINEAR)
             """Rotate the image."""
@@ -838,11 +843,11 @@ class BBoxRotate(Rotate):
                 mag,
                 border_value=self.img_border_value,
                 interpolation=self.interpolation)
-            translate_matrix = np.float32([[1, 0, -w_img//2 + cx], [0, 1, -h_img//2 + cy]])
+            translate_matrix = np.float32([[1, 0, -w_img // 2 + cx],
+                                           [0, 1, -h_img // 2 + cy]])
             rotated_img = cv2.warpAffine(
                 rotated_img,
-                translate_matrix,
-                (w_img, h_img),
+                translate_matrix, (w_img, h_img),
                 borderValue=tuple([0] * 3),
                 flags=cv2.INTER_LINEAR)
 
@@ -861,6 +866,7 @@ class BBoxRotate(Rotate):
 
 @TRANSFORMS.register_module()
 class BBoxTranslateX(TranslateX):
+
     def __init__(self, **kwargs):
         super().__init__(img_border_value=0, **kwargs)
 
@@ -868,9 +874,9 @@ class BBoxTranslateX(TranslateX):
         img_orig = results['img'].copy()
 
         img = np.zeros_like(results['img'], dtype=np.float32)
-        for idx, (bbox, mask) in enumerate(zip(results['bboxes'], results['masks'])):
+        for idx, (bbox,
+                  mask) in enumerate(zip(results['bboxes'], results['masks'])):
             w = bbox[2] - bbox[0]
-
             """Translate the image horizontally."""
             _mag = int(w * mag)
             translated_img = mmcv.imtranslate(
@@ -895,6 +901,7 @@ class BBoxTranslateX(TranslateX):
 
 @TRANSFORMS.register_module()
 class BBoxTranslateY(TranslateY):
+
     def __init__(self, **kwargs):
         super().__init__(img_border_value=0, **kwargs)
 
@@ -902,9 +909,9 @@ class BBoxTranslateY(TranslateY):
         img_orig = results['img'].copy()
 
         img = np.zeros_like(results['img'], dtype=np.float32)
-        for idx, (bbox, mask) in enumerate(zip(results['bboxes'], results['masks'])):
+        for idx, (bbox,
+                  mask) in enumerate(zip(results['bboxes'], results['masks'])):
             h = bbox[3] - bbox[1]
-
             """Translate the image horizontally."""
             _mag = int(h * mag)
             translated_img = mmcv.imtranslate(
@@ -929,26 +936,26 @@ class BBoxTranslateY(TranslateY):
 
 @TRANSFORMS.register_module()
 class BgShearX(ShearX):
+
     def __init__(self, **kwargs):
         super().__init__(img_border_value=0, **kwargs)
+
     def _transform_img(self, results: dict, mag: float) -> None:
         img_orig = results['img'].copy()
         (h_img, w_img, c_img) = img_orig.shape
-
         """Shear the image horizontally."""
         mask_max = np.max(results['masks'], axis=0)
 
-        shear_matrix = np.array([[1, mag, -mag*h_img//2], [0, 1, 0]], dtype=np.float32)
+        shear_matrix = np.array([[1, mag, -mag * h_img // 2], [0, 1, 0]],
+                                dtype=np.float32)
         sheared_mask = cv2.warpAffine(
             mask_max,
-            shear_matrix,
-            (w_img, h_img),
+            shear_matrix, (w_img, h_img),
             borderValue=tuple([0] * 3),
             flags=cv2.INTER_LINEAR)
         sheared_img = cv2.warpAffine(
             img_orig,
-            shear_matrix,
-            (w_img, h_img),
+            shear_matrix, (w_img, h_img),
             borderValue=tuple([0] * 3),
             flags=cv2.INTER_LINEAR)
 
@@ -966,25 +973,25 @@ class BgShearX(ShearX):
 
 @TRANSFORMS.register_module()
 class BgShearY(ShearY):
+
     def __init__(self, **kwargs):
         super().__init__(img_border_value=0, **kwargs)
+
     def _transform_img(self, results: dict, mag: float) -> None:
         img_orig = results['img'].copy()
         (h_img, w_img, c_img) = img_orig.shape
-
         """Shear the image vertically."""
         mask_max = np.max(results['masks'], axis=0)
-        shear_matrix = np.array([[1, 0, 0], [mag, 1, -mag*w_img//2]], dtype=np.float32)
+        shear_matrix = np.array([[1, 0, 0], [mag, 1, -mag * w_img // 2]],
+                                dtype=np.float32)
         sheared_mask = cv2.warpAffine(
             mask_max,
-            shear_matrix,
-            (w_img, h_img),
+            shear_matrix, (w_img, h_img),
             borderValue=tuple([0] * 3),
             flags=cv2.INTER_LINEAR)
         sheared_img = cv2.warpAffine(
             img_orig,
-            shear_matrix,
-            (w_img, h_img),
+            shear_matrix, (w_img, h_img),
             borderValue=tuple([0] * 3),
             flags=cv2.INTER_LINEAR)
 
@@ -1002,18 +1009,16 @@ class BgShearY(ShearY):
 
 @TRANSFORMS.register_module()
 class BgRotate(Rotate):
+
     def __init__(self, **kwargs):
         super().__init__(img_border_value=0, **kwargs)
+
     def _transform_img(self, results: dict, mag: float) -> None:
         img_orig = results['img'].copy()
-
         """Rotate the image."""
         mask_max = np.max(results['masks'], axis=0)
         rotated_mask = mmcv.imrotate(
-            mask_max,
-            mag,
-            border_value=0,
-            interpolation=self.interpolation)
+            mask_max, mag, border_value=0, interpolation=self.interpolation)
         rotated_img = mmcv.imrotate(
             img_orig,
             mag,
@@ -1034,13 +1039,13 @@ class BgRotate(Rotate):
 
 @TRANSFORMS.register_module()
 class BgTranslateX(TranslateX):
+
     def __init__(self, **kwargs):
         super().__init__(img_border_value=0, **kwargs)
 
     def _transform_img(self, results: dict, mag: float) -> None:
         img_orig = results['img'].copy()
         (h_img, w_img, c_img) = img_orig.shape
-
         """Translate the image horizontally."""
         _mag = w_img * mag
         mask_max = np.max(results['masks'], axis=0)
@@ -1071,12 +1076,13 @@ class BgTranslateX(TranslateX):
 
 @TRANSFORMS.register_module()
 class BgTranslateY(TranslateY):
+
     def __init__(self, **kwargs):
         super().__init__(img_border_value=0, **kwargs)
+
     def _transform_img(self, results: dict, mag: float) -> None:
         img_orig = results['img'].copy()
         (h_img, w_img, c_img) = img_orig.shape
-
         """Translate the image horizontally."""
         _mag = h_img * mag
         mask_max = np.max(results['masks'], axis=0)

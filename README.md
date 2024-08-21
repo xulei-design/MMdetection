@@ -4,7 +4,6 @@
     <img src="resources/oamix_examples.gif" width="640"/>
 </div>
 
-
 ## Introduction
 
 This repository is a fork of the [mmdetection](https://github.com/open-mmlab/mmdetection) toolbox with the implementation of OA-Mix,
@@ -18,7 +17,6 @@ The method enhances model robustness against domain shifts by generating diverse
 For more information on the details of OA-Mix and its use cases,
 please refer to the paper [Object-Aware Domain Generalization for Object Detection](https://ojs.aaai.org/index.php/AAAI/article/view/28076), presented at AAAI 2024.
 
-
 ## Example of OA-Mix
 
 Below is an example showing the results of OA-Mix:
@@ -26,7 +24,6 @@ Below is an example showing the results of OA-Mix:
 <div align=center>
 <img src="resources/oamix_examples.png" width="1200"/>
 </div>
-
 
 ## Performance Improvement with OA-Mix
 
@@ -39,10 +36,10 @@ Below is a performance comparison between a baseline object detection model and 
 
 The model was evaluated using the [robust detection benchmark](https://github.com/bethgelab/robust-detection-benchmark), which can be run using the [test_robustness.py](tools/analysis_tools/test_robustness.py) script provided by mmdetection.
 
-
 ## How to use?
 
 Modify the `train_pipeline` in the configuration file as follows:
+
 ```python
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=None),
@@ -58,6 +55,7 @@ train_pipeline = [
 ```
 
 Alternatively, you can directly call the OAMix class as shown below:
+
 ```python
 import numpy as np
 from mmdet.datasets.transforms.oa_mix import OAMix
@@ -70,7 +68,6 @@ gt_bboxes = np.random.randn(3, 4).astype(np.float32)
 oamix = OAMix()
 img_aug = oamix({'img': img, 'gt_bboxes': gt_bboxes})
 ```
-
 
 ## Citation
 
