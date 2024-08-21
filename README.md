@@ -40,6 +40,38 @@ Below is a performance comparison between a baseline object detection model and 
 The model was evaluated using the [robust detection benchmark](https://github.com/bethgelab/robust-detection-benchmark), which can be run using the [test_robustness.py](tools/analysis_tools/test_robustness.py) script provided by mmdetection.
 
 
+## How to use?
+
+Modify the `train_pipeline` in the configuration file as follows:
+```python
+train_pipeline = [
+    dict(type='LoadImageFromFile', backend_args=None),
+    dict(type='LoadAnnotations', with_bbox=True),
+    dict(
+        type='RandomResize',
+        scale=[(2048, 800), (2048, 1024)],
+        keep_ratio=True),
+    dict(type='RandomFlip', prob=0.5),
+    dict(type='OAMix', version='oamix')
+    dict(type='PackDetInputs')
+]
+```
+
+Alternatively, you can directly call the OAMix class as shown below:
+```python
+import numpy as np
+from mmdet.datasets.transforms.oa_mix import OAMix
+
+# Generate random data
+img = np.random.randint(0, 256, (427, 640, 3)).astype(np.uint8)
+gt_bboxes = np.random.randn(3, 4).astype(np.float32)
+
+# Apply OA-Mix
+oamix = OAMix()
+img_aug = oamix({'img': img, 'gt_bboxes': gt_bboxes})
+```
+
+
 ## Citation
 
 If you use this toolbox or benchmark in your research, please cite this project.
