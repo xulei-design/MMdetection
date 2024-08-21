@@ -4,6 +4,7 @@
     <img src="resources/oamix_examples.gif" width="640"/>
 </div>
 
+
 ## Introduction
 
 This repository is a fork of the [mmdetection](https://github.com/open-mmlab/mmdetection) toolbox with the implementation of OA-Mix,
@@ -17,6 +18,7 @@ The method enhances model robustness against domain shifts by generating diverse
 For more information on the details of OA-Mix and its use cases,
 please refer to the paper [Object-Aware Domain Generalization for Object Detection](https://ojs.aaai.org/index.php/AAAI/article/view/28076), presented at AAAI 2024.
 
+
 ## Example of OA-Mix
 
 Below is an example showing the results of OA-Mix:
@@ -25,26 +27,33 @@ Below is an example showing the results of OA-Mix:
 <img src="resources/oamix_examples.png" width="1200"/>
 </div>
 
+
 ## Performance Improvement with OA-Mix
 
 Below is a performance comparison between a baseline object detection model and the same model with OA-Mix applied:
 
-|         Model         |   Dataset    | mAP  | Gauss. | Shot | Impulse | Defocus | Glass | Motion | Zoom | Snow | Frost | Fog  | Bright | Contrast | Elastic | Pixel | JPEG | mPC  |
-| :-------------------: | :----------: | :--: | :----: | :--: | :-----: | :-----: | :---: | :----: | :--: | :--: | :---: | :--: | :----: | :------: | :-----: | ----- | :--: | :--: |
-|     Faster R-CNN      | Cityscapes-C | 42.2 |  0.5   | 1.1  |   1.1   |  17.2   | 16.5  |  18.3  | 2.1  | 2.2  | 12.3  | 29.8 |  32.0  |   24.1   |  40.1   | 18.7  | 15.1 | 15.4 |
-| Faster R-CNN + OA-Mix | Cityscapes-C | 42.7 |  7.2   | 9.6  |   7.7   |  22.8   | 18.8  |  21.9  | 5.4  | 5.2  | 23.6  | 37.3 |  38.7  |   31.9   |  40.2   | 22.2  | 20.2 | 20.8 |
+|         Model         |   Dataset    | Backbone | mAP  | Gauss. | Shot | Impulse | Defocus | Glass | Motion | Zoom | Snow | Frost | Fog  | Bright | Contrast | Elastic | Pixel | JPEG | mPC  |
+| :-------------------: | :----------: | :------: | :--: | :----: | :--: | :-----: | :-----: | :---: | :----: | :--: | :--: | :---: | :--: | :----: | :------: | :-----: | ----- | :--: | :--: |
+|     Faster R-CNN      | Cityscapes-C | R-50-FPN | 42.2 |  0.5   | 1.1  |   1.1   |  17.2   | 16.5  |  18.3  | 2.1  | 2.2  | 12.3  | 29.8 |  32.0  |   24.1   |  40.1   | 18.7  | 15.1 | 15.4 |
+| Faster R-CNN + OA-Mix | Cityscapes-C | R-50-FPN | 42.7 |  7.2   | 9.6  |   7.7   |  22.8   | 18.8  |  21.9  | 5.4  | 5.2  | 23.6  | 37.3 |  38.7  |   31.9   |  40.2   | 22.2  | 20.2 | 20.8 |
+
+The model was evaluated using the [robust detection benchmark](https://github.com/bethgelab/robust-detection-benchmark), which can be run using the [test_robustness.py](tools/analysis_tools/test_robustness.py) script provided by mmdetection.
+
 
 ## mmdetection Readme
 
 For information on mmdetection please refer to the [mmdetection readme](MMDETECTION_README.md).
 
+
 ## Installation
 
 Please refer to [INSTALL.md](INSTALL.md) for installation and dataset preparation.
 
+
 ## Get Started
 
 Please see [GETTING_STARTED.md](GETTING_STARTED.md) for the basic usage of MMDetection.
+
 
 ## Citation
 
