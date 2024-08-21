@@ -7,7 +7,7 @@
 ## Introduction
 
 This repository is a fork of the [mmdetection](https://github.com/open-mmlab/mmdetection) toolbox with the implementation of OA-Mix,
-a novel data augmentation technique designed to improve domain generalization in single-domain object detection.
+a novel data augmentation technique designed to improve domain generalization in object detection.
 OA-Mix is part of the [Object-Aware Domain Generalization (OA-DG)](https://github.com/woojulee24/OA-DG) framework,
 introduced in the paper [Object-Aware Domain Generalization for Object Detection](https://ojs.aaai.org/index.php/AAAI/article/view/28076).
 
