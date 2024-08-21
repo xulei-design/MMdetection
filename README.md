@@ -40,21 +40,6 @@ Below is a performance comparison between a baseline object detection model and 
 The model was evaluated using the [robust detection benchmark](https://github.com/bethgelab/robust-detection-benchmark), which can be run using the [test_robustness.py](tools/analysis_tools/test_robustness.py) script provided by mmdetection.
 
 
-## mmdetection Readme
-
-For information on mmdetection please refer to the [mmdetection readme](MMDETECTION_README.md).
-
-
-## Installation
-
-Please refer to [INSTALL.md](INSTALL.md) for installation and dataset preparation.
-
-
-## Get Started
-
-Please see [GETTING_STARTED.md](GETTING_STARTED.md) for the basic usage of MMDetection.
-
-
 ## Citation
 
 If you use this toolbox or benchmark in your research, please cite this project.
