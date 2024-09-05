@@ -177,6 +177,9 @@ def load_json_logs(json_logs):
                 if not len(log) > 1:
                     continue
 
+                if 'epoch' in log.keys():
+                    epoch = log['epoch']
+
                 if epoch not in log_dict:
                     log_dict[epoch] = defaultdict(list)
 
@@ -188,9 +191,6 @@ def load_json_logs(json_logs):
                         continue
                     else:
                         log_dict[epoch][k].append(v)
-
-                if 'epoch' in log.keys():
-                    epoch = log['epoch']
 
     return log_dicts
 
