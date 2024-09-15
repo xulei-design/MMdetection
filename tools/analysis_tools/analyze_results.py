@@ -124,9 +124,9 @@ class ResultVisualizer:
 
             if task == 'det':
                 gt_instances = InstanceData()
-                gt_instances.bboxes = [
+                gt_instances.bboxes = np.array([
                     d['bbox'] for d in data_info['gt_instances']
-                ]
+                ])
                 gt_instances.labels = [
                     d['bbox_label'] for d in data_info['gt_instances']
                 ]
