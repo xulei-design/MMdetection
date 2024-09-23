@@ -279,7 +279,7 @@ Results and models are available in the [model zoo](docs/en/model_zoo.md).
           <li><a href="configs/panoptic_fpn">Panoptic FPN (CVPR'2019)</a></li>
           <li><a href="configs/maskformer">MaskFormer (NeurIPS'2021)</a></li>
           <li><a href="configs/mask2former">Mask2Former (ArXiv'2021)</a></li>
-          <li><a href="configs/XDecoder">XDecoder (CVPR'2023)</a></li>
+          <li><a href="projects/XDecoder">XDecoder (CVPR'2023)</a></li>
         </ul>
       </td>
       <td>
