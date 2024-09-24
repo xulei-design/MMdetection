@@ -25,7 +25,7 @@ def _get_config_directory():
 
 def _get_config_module(fname):
     """Load a configuration as a python module."""
-    from mmcv import Config
+    from mmengine.config import Config
     config_dpath = _get_config_directory()
     config_fpath = join(config_dpath, fname)
     config_mod = Config.fromfile(config_fpath)
@@ -616,7 +616,7 @@ def test_detr_forward():
 
 
 def test_inference_detector():
-    from mmcv import ConfigDict
+    from mmengine.config import ConfigDict
 
     from mmdet.apis import inference_detector
     from mmdet.models import build_detector

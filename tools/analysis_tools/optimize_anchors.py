@@ -24,7 +24,7 @@ import os.path as osp
 import mmcv
 import numpy as np
 import torch
-from mmcv import Config
+from mmengine.config import Config
 from scipy.optimize import differential_evolution
 
 from mmdet.core import bbox_cxcywh_to_xyxy, bbox_overlaps, bbox_xyxy_to_cxcywh

@@ -1,6 +1,6 @@
 import pytest
 import torch
-from mmcv import ConfigDict
+from mmengine.config import ConfigDict
 
 from mmdet.models.seg_heads.panoptic_fusion_heads import MaskFormerFusionHead
 

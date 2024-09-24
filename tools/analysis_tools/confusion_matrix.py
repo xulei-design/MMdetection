@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import mmcv
 import numpy as np
 from matplotlib.ticker import MultipleLocator
-from mmcv import Config, DictAction
+from mmengine.config import Config, DictAction
 from mmcv.ops import nms
 
 from mmdet.core.evaluation.bbox_overlaps import bbox_overlaps

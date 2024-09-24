@@ -7,7 +7,7 @@ from functools import partial
 import numpy as np
 import onnx
 import torch
-from mmcv import Config, DictAction
+from mmengine.config import Config, DictAction
 
 from mmdet.core.export import build_model_from_cfg, preprocess_example_input
 from mmdet.core.export.model_wrappers import ONNXRuntimeDetector

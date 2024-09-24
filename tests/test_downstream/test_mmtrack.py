@@ -5,7 +5,7 @@ from collections import defaultdict
 import numpy as np
 import pytest
 import torch
-from mmcv import Config
+from mmengine.config import Config
 
 
 @pytest.mark.parametrize(

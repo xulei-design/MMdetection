@@ -5,7 +5,7 @@ import warnings
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmcv import ConfigDict
+from mmengine.config import ConfigDict
 from mmcv.ops import nms
 
 from ..builder import HEADS

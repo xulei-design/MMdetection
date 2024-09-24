@@ -4,7 +4,7 @@ import os
 import os.path as osp
 
 import mmcv
-from mmcv import Config, DictAction
+from mmengine.config import Config, DictAction
 from mmcv.runner import init_dist
 from terminaltables import GithubFlavoredMarkdownTable
 

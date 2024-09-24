@@ -3,7 +3,7 @@ import logging
 import os.path as osp
 from argparse import ArgumentParser
 
-from mmcv import Config
+from mmengine.config import Config
 
 from mmdet.apis import inference_detector, init_detector, show_result_pyplot
 from mmdet.utils import get_root_logger

@@ -261,7 +261,7 @@ def test_config_data_pipeline(config_rpath):
             test_config.py test_config_build_data_pipeline
     """
     import numpy as np
-    from mmcv import Config
+    from mmengine.config import Config
 
     from mmdet.datasets.pipelines import Compose
 

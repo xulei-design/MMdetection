@@ -5,7 +5,7 @@ import os
 import time
 
 import torch
-from mmcv import Config, DictAction
+from mmengine.config import Config, DictAction
 from mmcv.cnn import fuse_conv_bn
 from mmcv.parallel import MMDistributedDataParallel
 from mmcv.runner import init_dist, load_checkpoint, wrap_fp16_model

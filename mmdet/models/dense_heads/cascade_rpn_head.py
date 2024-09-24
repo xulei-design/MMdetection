@@ -5,7 +5,7 @@ import warnings
 
 import torch
 import torch.nn as nn
-from mmcv import ConfigDict
+from mmengine.config import ConfigDict
 from mmcv.ops import DeformConv2d, batched_nms
 from mmcv.runner import BaseModule, ModuleList
 

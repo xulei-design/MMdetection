@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from mmcv import ConfigDict
+from mmengine.config import ConfigDict
 
 from mmdet.core.mask import BitmapMasks
 from mmdet.models.dense_heads import MaskFormerHead

@@ -3,7 +3,7 @@ import argparse
 import warnings
 
 import mmcv
-from mmcv import Config, DictAction
+from mmengine.config import Config, DictAction
 from mmcv.parallel import MMDataParallel
 
 from mmdet.apis import single_gpu_test

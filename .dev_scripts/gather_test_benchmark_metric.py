@@ -4,7 +4,7 @@ import glob
 import os.path as osp
 
 import mmcv
-from mmcv import Config
+from mmengine.config import Config
 
 
 def parse_args():

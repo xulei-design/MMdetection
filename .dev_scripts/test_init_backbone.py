@@ -5,7 +5,7 @@ import os
 from os.path import dirname, exists, join
 
 import pytest
-from mmcv import Config, ProgressBar
+from mmengine.config import Config, ProgressBar
 from mmcv.runner import _load_checkpoint
 
 from mmdet.models import build_detector
@@ -28,7 +28,7 @@ def _get_config_directory():
 
 def _get_config_module(fname):
     """Load a configuration as a python module."""
-    from mmcv import Config
+    from mmengine.config import Config
     config_dpath = _get_config_directory()
     config_fpath = join(config_dpath, fname)
     config_mod = Config.fromfile(config_fpath)

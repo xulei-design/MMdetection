@@ -13,7 +13,7 @@ import os.path as osp
 from multiprocessing import Pool
 
 import mmcv
-from mmcv import Config
+from mmengine.config import Config
 
 
 def parse_args():
