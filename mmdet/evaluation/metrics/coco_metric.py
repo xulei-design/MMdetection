@@ -107,7 +107,8 @@ class CocoMetric(BaseMetric):
         self.use_mp_eval = use_mp_eval
         # whether to use Faster Coco Eval, default False
         self.use_faster_coco_eval = use_faster_coco_eval
-        if FasterCOCO is None:
+        if self.use_faster_coco_eva:
+            assert FasterCOCO is not None, 'faster-coco-eval is not installed'
             raise RuntimeError('faster-coco-eval is not installed')
 
         # proposal_nums used to compute recall or precision.
