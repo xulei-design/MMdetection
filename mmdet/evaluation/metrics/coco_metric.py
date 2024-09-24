@@ -18,6 +18,13 @@ from mmdet.registry import METRICS
 from mmdet.structures.mask import encode_mask_results
 from ..functional import eval_recalls
 
+try:
+    from faster_coco_eval import COCO as FasterCOCO
+    from faster_coco_eval import COCOeval_faster
+except ImportError:
+    FasterCOCO = None
+    COCOeval_faster = None
+
 
 @METRICS.register_module()
 class CocoMetric(BaseMetric):
@@ -64,6 +71,7 @@ class CocoMetric(BaseMetric):
         sort_categories (bool): Whether sort categories in annotations. Only
             used for `Objects365V1Dataset`. Defaults to False.
         use_mp_eval (bool): Whether to use mul-processing evaluation
+        use_faster_coco_eval (bool): Whether to use Faster-COCO-Eval evaluation
     """
     default_prefix: Optional[str] = 'coco'
 
@@ -81,7 +89,8 @@ class CocoMetric(BaseMetric):
                  collect_device: str = 'cpu',
                  prefix: Optional[str] = None,
                  sort_categories: bool = False,
-                 use_mp_eval: bool = False) -> None:
+                 use_mp_eval: bool = False,
+                 use_faster_coco_eval: bool = False) -> None:
         super().__init__(collect_device=collect_device, prefix=prefix)
         # coco evaluation metrics
         self.metrics = metric if isinstance(metric, list) else [metric]
@@ -96,6 +105,11 @@ class CocoMetric(BaseMetric):
         self.classwise = classwise
         # whether to use multi processing evaluation, default False
         self.use_mp_eval = use_mp_eval
+        # whether to use Faster Coco Eval, default False
+        self.use_faster_coco_eval = use_faster_coco_eval
+        if self.use_faster_coco_eva:
+            assert FasterCOCO is not None, 'faster-coco-eval is not installed'
+            raise RuntimeError('faster-coco-eval is not installed')
 
         # proposal_nums used to compute recall or precision.
         self.proposal_nums = list(proposal_nums)
@@ -127,7 +141,10 @@ class CocoMetric(BaseMetric):
         if ann_file is not None:
             with get_local_path(
                     ann_file, backend_args=self.backend_args) as local_path:
-                self._coco_api = COCO(local_path)
+                if self.use_faster_coco_eval:
+                    self._coco_api = FasterCOCO(local_path)
+                else:
+                    self._coco_api = COCO(local_path)
                 if sort_categories:
                     # 'categories' list in objects365_train.json and
                     # objects365_val.json is inconsistent, need sort
@@ -410,7 +427,10 @@ class CocoMetric(BaseMetric):
             logger.info('Converting ground truth to coco format...')
             coco_json_path = self.gt_to_coco_json(
                 gt_dicts=gts, outfile_prefix=outfile_prefix)
-            self._coco_api = COCO(coco_json_path)
+            if self.use_faster_coco_eval:
+                self._coco_api = FasterCOCO(coco_json_path)
+            else:
+                self._coco_api = COCO(coco_json_path)
 
         # handle lazy init
         if self.cat_ids is None:
@@ -468,6 +488,13 @@ class CocoMetric(BaseMetric):
 
             if self.use_mp_eval:
                 coco_eval = COCOevalMP(self._coco_api, coco_dt, iou_type)
+            elif self.use_faster_coco_eval:
+                coco_eval = COCOeval_faster(
+                    self._coco_api,
+                    coco_dt,
+                    iou_type,
+                    print_function=logger.info,
+                )
             else:
                 coco_eval = COCOeval(self._coco_api, coco_dt, iou_type)
 
