@@ -2668,7 +2668,7 @@ class MixUp(BaseTransform):
         target_h, target_w = ori_img.shape[:2]
         padded_img = np.ones((max(origin_h, target_h), max(
             origin_w, target_w), 3)) * self.pad_val
-        padded_img = padded_img.astype(np.uint8)
+        padded_img = padded_img.astype(retrieve_img.dtype)
         padded_img[:origin_h, :origin_w] = out_img
 
         x_offset, y_offset = 0, 0
@@ -2715,7 +2715,7 @@ class MixUp(BaseTransform):
         mixup_gt_bboxes_labels = mixup_gt_bboxes_labels[inside_inds]
         mixup_gt_ignore_flags = mixup_gt_ignore_flags[inside_inds]
 
-        results['img'] = mixup_img.astype(np.uint8)
+        results['img'] = mixup_img.astype(retrieve_img.dtype)
         results['img_shape'] = mixup_img.shape[:2]
         results['gt_bboxes'] = mixup_gt_bboxes
         results['gt_bboxes_labels'] = mixup_gt_bboxes_labels
@@ -3765,7 +3765,7 @@ class CachedMixUp(BaseTransform):
         target_h, target_w = ori_img.shape[:2]
         padded_img = np.ones((max(origin_h, target_h), max(
             origin_w, target_w), 3)) * self.pad_val
-        padded_img = padded_img.astype(np.uint8)
+        padded_img = padded_img.astype(retrieve_img.dtype)
         padded_img[:origin_h, :origin_w] = out_img
 
         x_offset, y_offset = 0, 0
@@ -3833,7 +3833,7 @@ class CachedMixUp(BaseTransform):
         if with_mask:
             mixup_gt_masks = mixup_gt_masks[inside_inds]
 
-        results['img'] = mixup_img.astype(np.uint8)
+        results['img'] = mixup_img.astype(retrieve_img.dtype)
         results['img_shape'] = mixup_img.shape[:2]
         results['gt_bboxes'] = mixup_gt_bboxes
         results['gt_bboxes_labels'] = mixup_gt_bboxes_labels
