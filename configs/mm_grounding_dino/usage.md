@@ -9,7 +9,7 @@ cd $MMDETROOT
 
 pip install -r requirements/multimodal.txt
 pip install emoji ddd-dataset
-pip install git+https://github.com/lvis-dataset/lvis-api.git"
+pip install "git+https://github.com/lvis-dataset/lvis-api.git"
 ```
 
 Please note that since the LVIS third-party library does not currently support numpy 1.24, ensure that your numpy version meets the requirements. It is recommended to install numpy version 1.23.
